@@ -8,12 +8,15 @@ import {
   SplineSeries,
   Tooltip
 } from "react-jsx-highcharts";
-import * as d3 from "d3";
 
-const confirmedCasesURL =
-  "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv";
-const deathsURL =
-  "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv";
+// https://covidtracking.com/api/
+const covidtrackingURL = "https://covidtracking.com/api/states/daily";
+
+const dataAttributes = {
+  death: { title: "Deaths" },
+  hospitalized: { title: "Hospitalizations" },
+  positive: { title: "Confirmed Cases" }
+};
 
 const xAxis = {
   type: "datetime",
@@ -45,60 +48,74 @@ const cchart = {
 };
 
 const App = () => {
-  const [confirmedCaseData, setConfirmedCaseData] = useState([
-    { state: "", data: [] }
-  ]);
-  const [deathsData, setDeathsData] = useState([{ state: "", data: [] }]);
-
+  const [processedData, setProcessedData] = useState({
+    hospitalized: [{ state: "", data: [] }],
+    positive: [{ state: "", data: [] }],
+    death: [{ state: "", data: [] }]
+  });
   const [firstLoad, setFirstLoad] = useState(true);
 
   // current filter is for US states and excludes specific US cities
   const dataRowFilter = dataRow =>
-    dataRow["Country/Region"] === "US" &&
-    // !dataRow["Province/State"].includes(",") &&
     [
-      "Georgia",
-      "Texas",
-      "Massachusetts",
-      "California",
-      "Washington",
-      "Colorado",
-      "New York"
-    ].includes(dataRow["Province/State"]);
+      "GA",
+      "TX",
+      "MA",
+      "CA",
+      "WA",
+      "CO",
+      "NY",
+      "PA"
+      // "MI",
+      // "DE",
+      // "SC",
+      // "IN",
+      // "MO"
+    ].includes(dataRow["state"]);
 
+  // converts m/d/yy to yyyy-mm-dd
   const convertDateToUNIXTime = date => {
-    const dateParts = date.split("/");
     return new Date(
-      `20${dateParts[2]}-${dateParts[0].padStart(2, "0")}-${dateParts[1]}`
+      `${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6)}`
     ).getTime();
   };
 
-  const getSeriesData = data =>
-    Object.keys(data)
-      .filter(key => /^\d{1,2}\/\d{1,2}\/\d{2}$/.test(key))
-      .map(key => [convertDateToUNIXTime(key), parseInt(data[key], 10)]);
+  // keys: death, hospitalized, positive
+  const processData = rawData => {
+    let processedDataTemp = {};
+    const filteredData = rawData.filter(dataRow => dataRowFilter(dataRow));
 
-  const processData = rawData =>
-    rawData
-      .filter(dataRow => dataRowFilter(dataRow))
-      .map(dataRow => ({
-        state: dataRow["Province/State"],
-        data: getSeriesData(dataRow)
-      }));
+    filteredData.forEach(rawDataRow => {
+      const formattedDate = convertDateToUNIXTime(
+        rawDataRow["date"].toString(10)
+      );
+
+      Object.keys(dataAttributes).forEach(key => {
+        if (!processedDataTemp[key]) {
+          processedDataTemp[key] = {};
+        }
+
+        if (!processedDataTemp[key][rawDataRow["state"]]) {
+          processedDataTemp[key][rawDataRow["state"]] = [];
+        }
+
+        processedDataTemp[key][rawDataRow["state"]].push([
+          formattedDate,
+          rawDataRow[key]
+        ]);
+      });
+    });
+
+    return processedDataTemp;
+  };
 
   if (firstLoad) {
-    d3.csv(confirmedCasesURL).then(data => {
-      setFirstLoad(false);
-      console.log(data);
-      console.log(processData(data));
-      setConfirmedCaseData(processData(data));
-    });
-    d3.csv(deathsURL).then(data => {
-      setFirstLoad(false);
-      console.log(data);
-      console.log(processData(data));
-      setDeathsData(processData(data));
-    });
+    fetch(covidtrackingURL)
+      .then(response => response.json())
+      .then(data => {
+        setFirstLoad(false);
+        setProcessedData(processData(data));
+      });
   }
 
   // useEffect(() => {
@@ -110,23 +127,22 @@ const App = () => {
   //   });
   // }, []);
 
-  let confirmedCasesSplines = confirmedCaseData.map(region => (
-    <SplineSeries
-      key={region.state}
-      id={region.state}
-      name={region.state}
-      data={region.data}
-    />
-  ));
+  let dataSplines = Object.keys(dataAttributes).reduce(
+    (splines, key) => ({
+      ...splines,
+      [key]: Object.keys(processedData[key]).map(region => (
+        <SplineSeries
+          key={region}
+          id={region}
+          name={region}
+          data={processedData[key][region]}
+        />
+      ))
+    }),
+    {}
+  );
+  console.log(dataSplines);
 
-  let deaths = deathsData.map(region => (
-    <SplineSeries
-      key={region.state}
-      id={region.state}
-      name={region.state}
-      data={region.data}
-    />
-  ));
   return (
     <>
       <HighchartsChart plotOptions={plotOptions}>
@@ -140,9 +156,25 @@ const App = () => {
         <Tooltip shared={true} />
         <YAxis id="number">
           <YAxis.Title>Confirmed cases</YAxis.Title>
-          {confirmedCasesSplines}
+          {dataSplines.positive}
         </YAxis>
       </HighchartsChart>
+
+      <HighchartsChart plotOptions={plotOptions}>
+        <Chart {...cchart} />
+
+        <Title>Hospitalizations</Title>
+
+        <XAxis {...xAxis}>
+          <XAxis.Title>Date</XAxis.Title>
+        </XAxis>
+        <Tooltip shared={true} />
+        <YAxis id="number">
+          <YAxis.Title>Hospitalizations</YAxis.Title>
+          {dataSplines.hospitalized}
+        </YAxis>
+      </HighchartsChart>
+
       <HighchartsChart plotOptions={plotOptions}>
         <Chart {...cchart} />
 
@@ -154,7 +186,7 @@ const App = () => {
         <Tooltip shared={true} />
         <YAxis id="number">
           <YAxis.Title>Deaths</YAxis.Title>
-          {deaths}
+          {dataSplines.death}
         </YAxis>
       </HighchartsChart>
     </>
