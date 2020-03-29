@@ -1,5 +1,21 @@
-export const dataAttributes = {
-  death: { title: "Deaths", order: 3 },
-  hospitalized: { title: "Hospitalizations", order: 2 },
-  positive: { title: "Confirmed Cases", order: 1 }
-};
+export const ChartsToPlot = [
+  { title: "Confirmed Cases", fieldName: "positive" },
+  { title: "Hospitalizations", fieldName: "hospitalized" },
+  { title: "Deaths", fieldName: "death" }
+];
+
+export const StatesToInclude = [
+  "GA",
+  "TX",
+  "MA",
+  "CA",
+  "WA",
+  "CO",
+  "NY",
+  "PA"
+  // "MI",
+  // "DE",
+  // "SC",
+  // "IN",
+  // "MO"
+];
