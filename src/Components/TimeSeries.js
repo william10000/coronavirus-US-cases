@@ -11,7 +11,7 @@ import {
 
 const xAxis = {
   type: "datetime",
-  tickInterval: 4 * 3600 * 1000,
+  tickInterval: 1000 * 60 * 60 * 24,
   dateTimeLabelFormats: {
     hour: "%l %p",
     day: "%b %e '%y",
@@ -35,7 +35,7 @@ const cchart = {
   spacingLeft: 20,
   spacingRight: 10,
   width: null,
-  height: 600
+  height: 400
 };
 
 // assume title is same as y-axis label
