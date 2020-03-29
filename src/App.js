@@ -1,51 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {
-  HighchartsChart,
-  Chart,
-  XAxis,
-  YAxis,
-  Title,
-  SplineSeries,
-  Tooltip
-} from "react-jsx-highcharts";
+import { dataAttributes } from "./Constants/Constants";
+import { TimeSeries } from "./Components/TimeSeries";
 
 // https://covidtracking.com/api/
 const covidtrackingURL = "https://covidtracking.com/api/states/daily";
-
-const dataAttributes = {
-  death: { title: "Deaths" },
-  hospitalized: { title: "Hospitalizations" },
-  positive: { title: "Confirmed Cases" }
-};
-
-const xAxis = {
-  type: "datetime",
-  tickInterval: 4 * 3600 * 1000,
-  dateTimeLabelFormats: {
-    hour: "%l %p",
-    day: "%b %e '%y",
-    week: "%b %e '%y",
-    month: "%b '%y",
-    year: "%y"
-  }
-};
-
-const plotOptions = {
-  series: {
-    turboThreshold: 100000
-  }
-};
-
-const cchart = {
-  type: "Spline",
-  zoomType: "x",
-  spacingBottom: 25,
-  spacingTop: 10,
-  spacingLeft: 20,
-  spacingRight: 10,
-  width: null,
-  height: 600
-};
 
 const App = () => {
   const [processedData, setProcessedData] = useState({
@@ -127,70 +85,28 @@ const App = () => {
   //   });
   // }, []);
 
-  let dataSplines = Object.keys(dataAttributes).reduce(
-    (splines, key) => ({
-      ...splines,
-      [key]: Object.keys(processedData[key]).map(region => (
-        <SplineSeries
-          key={region}
-          id={region}
-          name={region}
-          data={processedData[key][region]}
-        />
-      ))
-    }),
-    {}
-  );
-  console.log(dataSplines);
+  const sortedAttributes = Object.keys(dataAttributes).sort((a, b) => {
+    console.log(a, b);
+    if (dataAttributes[a].order > dataAttributes[b].order) {
+      return 1;
+    }
+    if (dataAttributes[b].order > dataAttributes[a].order) {
+      return -1;
+    }
 
-  return (
-    <>
-      <HighchartsChart plotOptions={plotOptions}>
-        <Chart {...cchart} />
+    return 0;
+  });
 
-        <Title>Confirmed cases</Title>
+  console.log(sortedAttributes);
+  const TimeSeriesCharts = sortedAttributes.map(attribute => (
+    <TimeSeries
+      data={processedData[attribute]}
+      title={dataAttributes[attribute].title}
+      key={attribute}
+    />
+  ));
 
-        <XAxis {...xAxis}>
-          <XAxis.Title>Date</XAxis.Title>
-        </XAxis>
-        <Tooltip shared={true} />
-        <YAxis id="number">
-          <YAxis.Title>Confirmed cases</YAxis.Title>
-          {dataSplines.positive}
-        </YAxis>
-      </HighchartsChart>
-
-      <HighchartsChart plotOptions={plotOptions}>
-        <Chart {...cchart} />
-
-        <Title>Hospitalizations</Title>
-
-        <XAxis {...xAxis}>
-          <XAxis.Title>Date</XAxis.Title>
-        </XAxis>
-        <Tooltip shared={true} />
-        <YAxis id="number">
-          <YAxis.Title>Hospitalizations</YAxis.Title>
-          {dataSplines.hospitalized}
-        </YAxis>
-      </HighchartsChart>
-
-      <HighchartsChart plotOptions={plotOptions}>
-        <Chart {...cchart} />
-
-        <Title>Deaths</Title>
-
-        <XAxis {...xAxis}>
-          <XAxis.Title>Date</XAxis.Title>
-        </XAxis>
-        <Tooltip shared={true} />
-        <YAxis id="number">
-          <YAxis.Title>Deaths</YAxis.Title>
-          {dataSplines.death}
-        </YAxis>
-      </HighchartsChart>
-    </>
-  );
+  return <>{TimeSeriesCharts}</>;
 };
 
 export default App;
