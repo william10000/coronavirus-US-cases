@@ -1,3 +1,4 @@
+// TODO: ratio of tests vs. positive
 export const ChartsToPlot = [
   { title: "Confirmed Cases", fieldName: "positive" },
   { title: "Hospitalizations", fieldName: "hospitalized" },
@@ -11,8 +12,10 @@ export const StatesToInclude = [
   "CA",
   "WA",
   "CO",
-  "NY",
-  "PA"
+  // "NY",
+  "PA",
+  "NJ",
+  "LA"
   // "MI",
   // "DE",
   // "SC",

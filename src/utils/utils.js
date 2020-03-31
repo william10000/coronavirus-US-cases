@@ -9,10 +9,10 @@ export const convertDateToUNIXTime = date =>
 // used for data returned by https://covidtracking.com/api/
 export const processData = rawData => {
   let processedDataTemp = {};
-  // current filter is for US states and excludes specific US cities
-  const dataRowFilter = dataRow => StatesToInclude.includes(dataRow.state);
 
-  const filteredData = rawData.filter(dataRow => dataRowFilter(dataRow));
+  const filteredData = rawData.filter(dataRow =>
+    StatesToInclude.includes(dataRow.state)
+  );
 
   filteredData.forEach(rawDataRow => {
     const formattedDate = convertDateToUNIXTime(rawDataRow.date.toString(10));

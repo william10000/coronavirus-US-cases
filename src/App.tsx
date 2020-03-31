@@ -30,6 +30,7 @@ const App = () => {
 
   const TimeSeriesCharts = ChartsToPlot.map(chart => (
     <TimeSeries
+      // @ts-ignore
       data={processedData[chart.fieldName]}
       title={chart.title}
       key={chart.title}
