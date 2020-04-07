@@ -2,7 +2,9 @@
 export const ChartsToPlot = [
   { title: "Confirmed Cases", fieldName: "positive" },
   { title: "Hospitalizations", fieldName: "hospitalized" },
-  { title: "Deaths", fieldName: "death" }
+  { title: "Hospitalized increase", fieldName: "hospitalizedIncrease" },
+  { title: "Deaths", fieldName: "death" },
+  { title: "Death increase", fieldName: "deathIncrease" },
 ];
 
 export const StatesToInclude = [
@@ -10,13 +12,13 @@ export const StatesToInclude = [
   "TX",
   "MA",
   "CA",
-  "WA",
+  // "WA",
   "CO",
   // "NY",
   "PA",
-  "NJ",
-  "LA"
-  // "MI",
+  // "NJ",
+  // "LA",
+  "MI",
   // "DE",
   // "SC",
   // "IN",
