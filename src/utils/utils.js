@@ -1,4 +1,4 @@
-import { ChartsToPlot, StatesToInclude } from "../constants/Constants";
+import { ChartsToPlot } from "../constants/Constants";
 
 // converts m/d/yy to yyyy-mm-dd
 export const convertDateToUNIXTime = (date) =>
@@ -10,11 +10,7 @@ export const convertDateToUNIXTime = (date) =>
 export const processData = (rawData) => {
   let processedDataTemp = {};
 
-  const filteredData = rawData.filter((dataRow) =>
-    StatesToInclude.includes(dataRow.state)
-  );
-
-  filteredData.forEach((rawDataRow) => {
+  rawData.forEach((rawDataRow) => {
     const formattedDate = convertDateToUNIXTime(rawDataRow.date.toString(10));
 
     ChartsToPlot.forEach((chart) => {
@@ -41,4 +37,17 @@ export const processData = (rawData) => {
   });
 
   return processedDataTemp;
+};
+
+export const filterData = (rawData, statesToInclude) => {
+  let filteredData = {};
+  Object.keys(rawData).forEach((field) => {
+    statesToInclude.forEach((state) => {
+      if (!filteredData[field]) {
+        filteredData[field] = {};
+      }
+      filteredData[field][state] = rawData[field][state];
+    });
+  });
+  return filteredData;
 };
