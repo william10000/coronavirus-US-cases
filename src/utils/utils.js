@@ -14,11 +14,11 @@ export const processData = (rawData) => {
     const formattedDate = convertDateToUNIXTime(rawDataRow.date.toString(10));
 
     ChartsToPlot.forEach((chart) => {
-      if (!processedDataTemp[chart.fieldName]) {
+      if (processedDataTemp[chart.fieldName] === undefined) {
         processedDataTemp[chart.fieldName] = {};
       }
 
-      if (!processedDataTemp[chart.fieldName][rawDataRow.state]) {
+      if (processedDataTemp[chart.fieldName][rawDataRow.state] === undefined) {
         processedDataTemp[chart.fieldName][rawDataRow.state] = [];
       }
 
@@ -43,7 +43,7 @@ export const filterData = (rawData, statesToInclude) => {
   let filteredData = {};
   Object.keys(rawData).forEach((field) => {
     statesToInclude.forEach((state) => {
-      if (!filteredData[field]) {
+      if (filteredData[field] === undefined) {
         filteredData[field] = {};
       }
       filteredData[field][state] = rawData[field][state];
