@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ChartsToPlot } from "./constants/Constants";
-import { TimeSeries } from "./components/TimeSeries";
+import TimeSeries from "./components/TimeSeries";
 import { processData } from "./utils/utils";
 
 const covidtrackingURL = "https://covidtracking.com/api/states/daily";
@@ -10,7 +10,7 @@ const App = () => {
     ChartsToPlot.reduce(
       (initialProcessedData, chart) => ({
         ...initialProcessedData,
-        [chart.fieldName]: []
+        [chart.fieldName]: [],
       }),
       {}
     )
@@ -20,15 +20,15 @@ const App = () => {
 
   if (firstLoad) {
     fetch(covidtrackingURL)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         setFirstLoad(false);
         setRawData(data);
         setProcessedData(processData(data));
       });
   }
 
-  const TimeSeriesCharts = ChartsToPlot.map(chart => (
+  const TimeSeriesCharts = ChartsToPlot.map((chart) => (
     <TimeSeries
       // @ts-ignore
       data={processedData[chart.fieldName]}

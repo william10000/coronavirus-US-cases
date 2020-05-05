@@ -19,6 +19,7 @@ export const StatesToInclude = [
   // "NJ",
   // "LA",
   "MI",
+  "DC",
   // "DE",
   // "SC",
   // "IN",

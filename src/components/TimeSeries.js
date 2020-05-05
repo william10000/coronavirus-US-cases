@@ -1,13 +1,15 @@
 import React from "react";
 import {
+  withHighcharts,
   HighchartsChart,
   Chart,
   XAxis,
   YAxis,
   Title,
   SplineSeries,
-  Tooltip
+  Tooltip,
 } from "react-jsx-highcharts";
+import Highcharts from "highcharts";
 
 const xAxis = {
   type: "datetime",
@@ -17,14 +19,18 @@ const xAxis = {
     day: "%b %e '%y",
     week: "%b %e '%y",
     month: "%b '%y",
-    year: "%y"
-  }
+    year: "%y",
+  },
+};
+
+const yAxis = {
+  type: "logarithmic",
 };
 
 const plotOptions = {
   series: {
-    turboThreshold: 100000
-  }
+    turboThreshold: 100000,
+  },
 };
 
 const cchart = {
@@ -35,13 +41,13 @@ const cchart = {
   spacingLeft: 20,
   spacingRight: 10,
   width: null,
-  height: 400
+  height: 400,
 };
 
 // assume title is same as y-axis label
 // data is an object like { "TX": [[data, #]]}
-export const TimeSeries = ({ data, title }) => {
-  let dataSplines = Object.keys(data).map(state => (
+const TimeSeries = ({ data, title }) => {
+  let dataSplines = Object.keys(data).map((state) => (
     <SplineSeries key={state} id={state} name={state} data={data[state]} />
   ));
 
@@ -55,10 +61,12 @@ export const TimeSeries = ({ data, title }) => {
         <XAxis.Title>Date</XAxis.Title>
       </XAxis>
       <Tooltip shared={true} />
-      <YAxis id="number">
+      <YAxis {...yAxis}>
         <YAxis.Title>{title}</YAxis.Title>
         {dataSplines}
       </YAxis>
     </HighchartsChart>
   );
 };
+
+export default withHighcharts(TimeSeries, Highcharts);
