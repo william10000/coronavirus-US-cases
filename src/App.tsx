@@ -7,6 +7,8 @@ const covidtrackingURL = "https://covidtracking.com/api/states/daily";
 
 // TODO: add dropdown for states
 // use suspense to show spinner when doing data stuff
+// shift data to days since 10? cases
+// normalize data to population
 
 const App = () => {
   const initialData = ChartsToPlot.reduce(
