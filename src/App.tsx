@@ -6,7 +6,6 @@ import { processData, filterData } from "./utils/utils";
 const covidtrackingURL = "https://covidtracking.com/api/states/daily";
 
 // TODO: add dropdown for states
-// see if regular highchart react wrapper has better performance
 // use suspense to show spinner when doing data stuff
 
 const App = () => {
