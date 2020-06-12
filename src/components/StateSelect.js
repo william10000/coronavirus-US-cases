@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -6,26 +6,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import Chip from "@material-ui/core/Chip";
+import { AppContext } from "../AppContext";
 
 // TODO: get from global state later
-const states = [
-  "GA",
-  "TX",
-  "MA",
-  "CA",
-  // "WA",
-  "CO",
-  // "NY",
-  "PA",
-  // "NJ",
-  // "LA",
-  "MI",
-  "DC",
-  // "DE",
-  // "SC",
-  // "IN",
-  // "MO"
-];
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -44,6 +27,9 @@ const useStyles = makeStyles((theme) => ({
 export const StateSelect = () => {
   const classes = useStyles();
   const [usState, setUsState] = React.useState([]);
+  const context = useContext(AppContext);
+
+  const states = context.uniqueStates || [];
 
   const handleChange = (event) => {
     setUsState(event.target.value);
