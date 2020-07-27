@@ -8,8 +8,6 @@ import Select from "@material-ui/core/Select";
 import Chip from "@material-ui/core/Chip";
 import { AppContext } from "../AppContext";
 
-// TODO: get from global state later
-
 const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
@@ -25,15 +23,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const StateSelect = () => {
-  const classes = useStyles();
-  const [usState, setUsState] = React.useState([]);
   const context = useContext(AppContext);
+  const classes = useStyles();
 
-  const states = context.uniqueStates || [];
-
-  const handleChange = (event) => {
-    setUsState(event.target.value);
-  };
+  const allUSstates = context.filteredData.processedData.uniqueStates || [];
+  const selectedStates = context.filteredData.selectedStates;
+  const handleSelectedStateUpdate = context.handleSelectedStateUpdate;
 
   return (
     <div>
@@ -43,8 +38,8 @@ export const StateSelect = () => {
           labelId="demo-mutiple-chip-label"
           id="demo-mutiple-chip"
           multiple
-          value={usState}
-          onChange={handleChange}
+          value={selectedStates}
+          onChange={handleSelectedStateUpdate}
           input={<Input id="select-multiple-chip" />}
           renderValue={(selected) => (
             <div className={classes.chips}>
@@ -54,7 +49,7 @@ export const StateSelect = () => {
             </div>
           )}
         >
-          {states.map((state) => (
+          {allUSstates.map((state) => (
             <MenuItem key={state} value={state}>
               {state}
             </MenuItem>
