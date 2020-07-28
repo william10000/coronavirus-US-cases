@@ -4,15 +4,14 @@ import TimeSeries from "./components/TimeSeries";
 import { StateSelect } from "./components/StateSelect";
 import { processData, filterData } from "./utils/utils";
 import Grid from "@material-ui/core/Grid";
-import { AppContext } from "./AppContext";
+import Loader from "./components/Loader";
 
 const covidtrackingURL = "https://covidtracking.com/api/states/daily";
 // https://simple.wikipedia.org/wiki/U.S._postal_abbreviations for key to 2 letter abbreviations
 
 // TODO:
 // bug? reducer called twice per update
-// pass props instead of context
-// use suspense to show spinner when doing data stuff
+// move reducer and states to a directory or file
 // shift data to days since 10? cases
 // normalize data to population
 
@@ -23,8 +22,12 @@ const App = () => {
       case "INITIALIZE":
         return {
           processedData: action.processedData,
-          selectedStates: action.selectedStates,
+          selectedStates: action.selectedStates || state.selectedStates,
           data: filterData(action.processedData, action.selectedStates),
+          status:
+            action.selectedStates || state.selectedStates
+              ? "ready"
+              : "not-ready",
         };
       case "UPDATE_FILTERED_DATA":
         return {
@@ -56,10 +59,10 @@ const App = () => {
   }, []);
 
   // @ts-ignore
-  const handleSelectedStateUpdate = (event) => {
+  const handleSelectedStateUpdate = (selectedStates) => {
     filteredDataDispatch({
       type: "UPDATE_FILTERED_DATA",
-      selectedStates: event.target.value,
+      selectedStates: selectedStates,
     });
   };
 
@@ -75,25 +78,26 @@ const App = () => {
         ))
       : [];
 
-  const contextValues = {
-    filteredData: filteredData,
-    filteredDataDispatch: filteredDataDispatch,
-    handleSelectedStateUpdate: handleSelectedStateUpdate,
-  };
-
-  if (filteredData.processedData && filteredData.data) {
+  if (filteredData.status === "ready") {
     return (
-      <AppContext.Provider value={contextValues}>
-        <Grid container direction="column" alignItems="center">
-          <Grid>
-            <StateSelect />
-          </Grid>
-          <Grid>{TimeSeriesCharts.length > 0 && TimeSeriesCharts}</Grid>
+      <Grid container direction="column" alignItems="center">
+        <Grid>
+          {/* @ts-ignore */}
+          <StateSelect
+            // @ts-ignore
+            data={filteredData}
+            selectedStateUpdateHandler={handleSelectedStateUpdate}
+          />
         </Grid>
-      </AppContext.Provider>
+        <Grid>{TimeSeriesCharts.length > 0 && TimeSeriesCharts}</Grid>
+      </Grid>
     );
   } else {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
   }
 };
 

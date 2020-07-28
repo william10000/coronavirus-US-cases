@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
@@ -6,7 +6,6 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import Chip from "@material-ui/core/Chip";
-import { AppContext } from "../AppContext";
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -22,13 +21,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const StateSelect = () => {
-  const context = useContext(AppContext);
+export const StateSelect = (props) => {
   const classes = useStyles();
 
-  const allUSstates = context.filteredData.processedData.uniqueStates || [];
-  const selectedStates = context.filteredData.selectedStates;
-  const handleSelectedStateUpdate = context.handleSelectedStateUpdate;
+  const allUSstates = props.data.processedData.uniqueStates || [];
+  const selectedStates = props.data.selectedStates;
+  const handleSelectedStateUpdate = props.selectedStateUpdateHandler;
 
   return (
     <div>
@@ -39,7 +37,7 @@ export const StateSelect = () => {
           id="demo-mutiple-chip"
           multiple
           value={selectedStates}
-          onChange={handleSelectedStateUpdate}
+          onChange={(e) => handleSelectedStateUpdate(e.target.value)}
           input={<Input id="select-multiple-chip" />}
           renderValue={(selected) => (
             <div className={classes.chips}>
