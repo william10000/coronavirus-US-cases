@@ -30,6 +30,7 @@ export const useFilteredData = () => {
     data: {},
   });
 
+  // wrapped in useCallback b/c it's used as a useEffect dependency
   const initializeFilteredData = useCallback(
     (rawData, initialStates) =>
       filteredDataDispatch({
@@ -40,14 +41,11 @@ export const useFilteredData = () => {
     [filteredDataDispatch]
   );
 
-  const updateFilteredData = useCallback(
-    (selectedStates) =>
-      filteredDataDispatch({
-        type: "UPDATE_FILTERED_DATA",
-        selectedStates: selectedStates,
-      }),
-    [filteredDataDispatch]
-  );
+  const updateFilteredData = (selectedStates) =>
+    filteredDataDispatch({
+      type: "UPDATE_FILTERED_DATA",
+      selectedStates: selectedStates,
+    });
 
   return [filteredData, initializeFilteredData, updateFilteredData];
 };
