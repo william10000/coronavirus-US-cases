@@ -6,7 +6,7 @@ import Grid from "@material-ui/core/Grid";
 import Loader from "./components/Loader";
 import { useFilteredData } from "./state/filteredData";
 
-const covidtrackingURL = "https://covidtracking.com/api/states/daily";
+const covidtrackingURL = "https://api.covidtracking.com/v1/states/daily.json";
 // https://simple.wikipedia.org/wiki/U.S._postal_abbreviations for key to 2 letter abbreviations
 
 // TODO:
