@@ -30,11 +30,25 @@ export const processData = (rawData) => {
     });
   });
 
-  // sort by date
+  const fieldMap = ChartsToPlot.reduce(
+    (map, chart) => ({
+      ...map,
+      [chart.fieldName]: chart,
+    }),
+    {}
+  );
+
+  // sort by date and get moving average if specified in ChartsToPlot
   Object.keys(processedDataTemp).forEach((field) => {
     let fieldStates = Object.keys(processedDataTemp[field]);
     fieldStates.forEach((state) => {
       processedDataTemp[field][state].sort((a, b) => a[0] - b[0]);
+      if (fieldMap[field].movingAverage) {
+        processedDataTemp[field][state] = getMovingAverage(
+          processedDataTemp[field][state],
+          fieldMap[field].movingAverage
+        );
+      }
     });
     // each field could have data from different states so we want a union of states from all fields
     uniqueStates = new Set([...uniqueStates, ...fieldStates]);
@@ -56,4 +70,16 @@ export const filterData = (processedData, statesToInclude) => {
     });
   });
   return filteredData;
+};
+
+// calculates a moving average of 'values' based on number of elements specified by window arg
+// expects an array of [time, value] arrays
+// TODO: get rid of the tail of zeros at the elements 0-window-1
+const getMovingAverage = (data, window) => {
+  for (let i = data.length; i >= window; i--) {
+    data[i - 1][1] =
+      data.slice(i - window, i).reduce((sum, element) => sum + element[1], 0) /
+      window;
+  }
+  return data.slice(window - 1, data.length);
 };
