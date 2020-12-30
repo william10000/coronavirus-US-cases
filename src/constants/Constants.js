@@ -11,21 +11,4 @@ export const ChartsToPlot = [
   { title: "Death increase", fieldName: "deathIncrease", movingAverage: 7 },
 ];
 
-export const StatesToInclude = [
-  "GA",
-  "TX",
-  "MA",
-  "CA",
-  // "WA",
-  "CO",
-  // "NY",
-  "PA",
-  // "NJ",
-  // "LA",
-  "MI",
-  "DC",
-  // "DE",
-  // "SC",
-  // "IN",
-  // "MO"
-];
+export const StatesToInclude = ["CA", "CO", "GA", "MA", "NY", "PA", "TX"];
