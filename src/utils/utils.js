@@ -78,8 +78,13 @@ export const filterData = (processedData, statesToInclude) => {
 const getMovingAverage = (data, window) => {
   for (let i = data.length; i >= window; i--) {
     data[i - 1][1] =
-      data.slice(i - window, i).reduce((sum, element) => sum + element[1], 0) /
-      window;
+      Math.round(
+        (data
+          .slice(i - window, i)
+          .reduce((sum, element) => sum + element[1], 0) /
+          window) *
+          10
+      ) / 10;
   }
   return data.slice(window - 1, data.length);
 };
