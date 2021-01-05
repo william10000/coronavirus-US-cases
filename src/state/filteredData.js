@@ -46,6 +46,6 @@ export const useFilteredData = () => {
       type: "UPDATE_FILTERED_DATA",
       selectedStates: selectedStates,
     });
-
+  // todo: save selections to localStorage
   return [filteredData, initializeFilteredData, updateFilteredData];
 };
