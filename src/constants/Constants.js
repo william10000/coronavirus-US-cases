@@ -1,6 +1,11 @@
 // TODO: ratio of tests vs. positive
 export const ChartsToPlot = [
-  { title: "Confirmed Cases", fieldName: "positive" },
+  { title: "Confirmed cases", fieldName: "positive" },
+  {
+    title: "Confirmed cases increase",
+    fieldName: "positiveIncrease",
+    movingAverage: 7,
+  },
   { title: "Hospitalizations", fieldName: "hospitalized" },
   {
     title: "Hospitalized increase",
