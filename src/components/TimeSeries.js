@@ -40,8 +40,8 @@ const cchart = {
   spacingTop: 10,
   spacingLeft: 20,
   spacingRight: 10,
-  width: null,
-  height: 400,
+  width: 800,
+  height: 600,
 };
 
 // assume title is same as y-axis label
