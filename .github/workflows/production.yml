@@ -37,3 +37,4 @@ jobs:
           aws s3 cp build/index.html s3://covid-19-us-tracker --cache-control no-store
 
 # index.html contains generated filenames for bundles so we shouldn't cache it
+# no-cache doesn't seem to work - should probably use a cloudfront setting else we need to invalidate specific files
